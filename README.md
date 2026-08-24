@@ -18,9 +18,11 @@ The framework is informed by my experience scaling recruiting operations, leadin
 - Generates a concise leadership-ready summary
 - Preserves human review and responsible-AI safeguards
 
-## Open the tool
+## Use the live tool
 
-Download or open `index.html` in a web browser. No installation, account, candidate data, or API key is required.
+[**Open the AI Recruiting Operations Command Center**](https://matthewrojas090-hash.github.io/ai-recruiting-operations-command-center/)
+
+No installation, account, candidate data, or API key is required.
 
 ## Repository contents
 
