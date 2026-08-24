@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Recruiting Operations Command Center</title>
+<style>
+:root{--navy:#12233f;--blue:#2563eb;--teal:#0f766e;--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#64748b;--red:#b91c1c;--amber:#b45309;--green:#047857}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}header{background:linear-gradient(120deg,var(--navy),#244b7a);color:#fff;padding:36px 20px}header div,main{max-width:1100px;margin:auto}h1{margin:0 0 8px;font-size:clamp(28px,5vw,46px)}header p{max-width:760px;line-height:1.5;margin:0;color:#dce8f8}.notice{background:#e0f2fe;border-left:4px solid var(--blue);padding:14px 16px;margin:24px 0;border-radius:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 4px 18px rgba(15,23,42,.08)}label{display:block;font-weight:700;margin:14px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}button{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:12px 18px;font-weight:700;cursor:pointer;margin-top:18px}button.secondary{background:#475569;margin-left:8px}.result{display:none}.priority{font-size:30px;font-weight:800;margin:8px 0}.p1{color:var(--red)}.p2{color:var(--amber)}.p3{color:var(--green)}.clarify{color:#7c3aed}.score{font-size:14px;color:var(--muted)}ul{padding-left:20px;line-height:1.55}.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.metric{background:#fff;padding:16px;border-radius:12px;text-align:center;box-shadow:0 3px 12px rgba(15,23,42,.06)}.metric strong{display:block;font-size:25px;color:var(--navy)}footer{text-align:center;padding:30px;color:var(--muted);font-size:14px}@media(max-width:760px){.grid,.metric-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div><h1>AI Recruiting Operations Command Center</h1><p>A practical decision-support tool for organizing requisition priorities, pipeline risk, recruiter effort, and leadership actions—while keeping final decisions with people.</p></div></header>
+<main>
+<div class="notice"><strong>Responsible-AI note:</strong> Use fictional or de-identified information. This tool organizes supplied facts; it does not make hiring decisions or evaluate individual candidates.</div>
+<div class="metric-row">
+<div class="metric"><strong>8</strong>Review dimensions</div>
+<div class="metric"><strong>4</strong>Priority outcomes</div>
+<div class="metric"><strong>100%</strong>Synthetic demo</div>
+<div class="metric"><strong>Human</strong>Final decision</div>
+</div>
+<div class="grid">
+<section class="card">
+<h2>Enter requisition facts</h2>
+<label for="role">Role title</label><input id="role" value="Senior Cloud Engineer">
+<label for="approval">Headcount approval</label><select id="approval"><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="unknown">Unknown</option></select>
+<label for="impact">Business impact</label><select id="impact"><option value="critical">Critical</option><option value="high">High</option><option value="standard">Standard</option><option value="unclear">Unclear</option></select>
+<label for="urgency">Time sensitivity</label><select id="urgency"><option value="immediate">Immediate deadline</option><option value="soon">Within 30 days</option><option value="normal">Standard timeline</option><option value="unknown">Unknown</option></select>
+<label for="pipeline">Qualified candidates active</label><input id="pipeline" type="number" min="0" value="1">
+<label for="age">Days open</label><input id="age" type="number" min="0" value="70">
+<label for="effort">Estimated recruiting effort</label><select id="effort"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="unknown">Unknown</option></select>
+<label for="risk">Known hiring risk</label><textarea id="risk" rows="3">Specialized background and limited pipeline</textarea>
+<button onclick="analyze()">Analyze requisition</button><button class="secondary" onclick="loadExample()">Load another example</button>
+</section>
+<section class="card result" id="result">
+<h2>Preliminary recommendation</h2>
+<div id="priority" class="priority"></div><div id="score" class="score"></div>
+<h3>Evidence used</h3><ul id="evidence"></ul>
+<h3>Information to verify</h3><ul id="missing"></ul>
+<h3>Recommended next actions</h3><ul id="actions"></ul>
+<h3>Leadership-ready summary</h3><p id="summary"></p>
+</section>
+</div>
+<section class="card" style="margin-top:18px">
+<h2>How to use the recommendation</h2>
+<ul><li>Validate every input with recruiting and business leaders.</li><li>Compare the recommendation with recruiter capacity and organizational context.</li><li>Document human adjustments and the reason for each change.</li><li>Revisit priorities when deadlines, approvals, or pipeline conditions change.</li></ul>
+</section>
+</main>
+<footer>Created by Matthew Rojas · Practical AI for Recruiting Operations · All examples are fictional</footer>
+<script>
+function analyze(){
+var role=document.getElementById('role').value||'Untitled role';
+var approval=document.getElementById('approval').value;
+var impact=document.getElementById('impact').value;
+var urgency=document.getElementById('urgency').value;
+var pipeline=Number(document.getElementById('pipeline').value);
+var age=Number(document.getElementById('age').value);
+var effort=document.getElementById('effort').value;
+var risk=document.getElementById('risk').value.trim();
+var score=0,evidence=[],missing=[],actions=[];
+if(approval==='confirmed'){score+=20;evidence.push('Headcount approval is confirmed.')}else{missing.push('Confirm headcount approval before launching or expanding the search.');}
+if(impact==='critical'){score+=25;evidence.push('Business impact is marked critical.')}else if(impact==='high'){score+=18;evidence.push('Business impact is marked high.')}else if(impact==='unclear'){missing.push('Validate the business impact with leadership.');}
+if(urgency==='immediate'){score+=20;evidence.push('A time-sensitive deadline was supplied.')}else if(urgency==='soon'){score+=12;evidence.push('The target timeline is within 30 days.')}else if(urgency==='unknown'){missing.push('Confirm the target hiring date or dependency.');}
+if(pipeline<=1){score+=15;evidence.push('The active qualified pipeline is limited.');actions.push('Reset the search strategy and expand evidence-based sourcing channels.');}else if(pipeline>=5){evidence.push('The role has an active pipeline that may reduce immediate sourcing pressure.');actions.push('Maintain candidate communication and progress the current pipeline.');}
+if(age>=60){score+=10;evidence.push('The requisition has been open at least 60 days.');}
+if(effort==='high'){score+=10;evidence.push('The search is expected to require high recruiting effort.');actions.push('Confirm recruiter capacity and consider dedicated sourcing support.');}else if(effort==='unknown'){missing.push('Estimate recruiting effort before finalizing priorities.');}
+if(risk){evidence.push('Known risk: '+risk+'.');}else{missing.push('Document known hiring risks or confirm that none are currently identified.');}
+var label,klass;
+if(approval!=='confirmed'&&(impact==='unclear'||urgency==='unknown')){label='Needs clarification';klass='clarify';actions.unshift('Resolve approval, scope, impact, and deadline before assigning final priority.');}
+else if(score>=65){label='Priority 1 — Immediate focus';klass='p1';actions.unshift('Hold a hiring-manager search reset and agree on this week’s owners.');}
+else if(score>=40){label='Priority 2 — Active progress';klass='p2';actions.unshift('Maintain active progress and review risks in the weekly recruiting meeting.');}
+else{label='Priority 3 — Maintain or monitor';klass='p3';actions.unshift('Monitor for changes and protect capacity for higher-risk searches.');}
+if(!missing.length)missing.push('No critical information gaps were detected; leaders should still validate all supplied facts.');
+document.getElementById('priority').textContent=label;document.getElementById('priority').className='priority '+klass;
+document.getElementById('score').textContent='Planning score: '+score+' / 100. The score is a discussion aid, not an objective decision.';
+fillList('evidence',evidence);fillList('missing',missing);fillList('actions',actions);
+document.getElementById('summary').textContent=role+' is preliminarily categorized as '+label+'. The recommendation reflects the supplied approval, impact, urgency, pipeline, age, effort, and risk information. Final priority should be confirmed by recruiting and business leaders.';
+document.getElementById('result').style.display='block';
+}
+function fillList(id,items){document.getElementById(id).innerHTML=items.map(function(x){return '<li>'+escapeHtml(x)+'</li>';}).join('');}
+function escapeHtml(x){var d=document.createElement('div');d.textContent=x;return d.innerHTML;}
+function loadExample(){document.getElementById('role').value='Product Marketing Manager';document.getElementById('approval').value='pending';document.getElementById('impact').value='high';document.getElementById('urgency').value='unknown';document.getElementById('pipeline').value='0';document.getElementById('age').value='12';document.getElementById('effort').value='unknown';document.getElementById('risk').value='Approval and scope remain unresolved';analyze();}
+analyze();
+</script>
+</body>
+</html>
