@@ -1,0 +1,4 @@
+role,department,approval,business_impact,time_sensitivity,qualified_candidates,days_open,recruiting_effort,known_risk
+Senior Cloud Engineer,Infrastructure,Confirmed,Critical,Immediate,1,70,High,Specialized background and limited pipeline
+Operations Coordinator,Workplace Operations,Confirmed,Standard,Normal,8,20,Low,None documented
+Product Marketing Manager,Marketing,Pending,High,Unknown,0,12,Unknown,Approval and scope remain unresolved
