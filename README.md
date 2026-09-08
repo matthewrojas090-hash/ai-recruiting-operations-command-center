@@ -17,6 +17,7 @@ The framework is informed by my experience scaling recruiting operations, leadin
 - Suggests recruiter and leadership actions
 - Generates a concise leadership-ready summary
 - Preserves human review and responsible-AI safeguards
+- Provides an in-product responsible-AI checklist for privacy, evidence verification, human review, and documented overrides
 
 ## Use the live tool
 
