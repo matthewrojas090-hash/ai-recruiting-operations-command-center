@@ -7,6 +7,36 @@
 <style>
 :root{--navy:#12233f;--blue:#2563eb;--teal:#0f766e;--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#64748b;--red:#b91c1c;--amber:#b45309;--green:#047857}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}header{background:linear-gradient(120deg,var(--navy),#244b7a);color:#fff;padding:36px 20px}header div,main{max-width:1100px;margin:auto}h1{margin:0 0 8px;font-size:clamp(28px,5vw,46px)}header p{max-width:760px;line-height:1.5;margin:0;color:#dce8f8}.notice{background:#e0f2fe;border-left:4px solid var(--blue);padding:14px 16px;margin:24px 0;border-radius:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 4px 18px rgba(15,23,42,.08)}label{display:block;font-weight:700;margin:14px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}button{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:12px 18px;font-weight:700;cursor:pointer;margin-top:18px}button.secondary{background:#475569;margin-left:8px}.result{display:none}.priority{font-size:30px;font-weight:800;margin:8px 0}.p1{color:var(--red)}.p2{color:var(--amber)}.p3{color:var(--green)}.clarify{color:#7c3aed}.score{font-size:14px;color:var(--muted)}ul{padding-left:20px;line-height:1.55}.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.metric{background:#fff;padding:16px;border-radius:12px;text-align:center;box-shadow:0 3px 12px rgba(15,23,42,.06)}.metric strong{display:block;font-size:25px;color:var(--navy)}footer{text-align:center;padding:30px;color:var(--muted);font-size:14px}@media(max-width:760px){.grid,.metric-row{grid-template-columns:1fr}}
+
+.review-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:14px
+}
+.review-item{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:14px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  background:#f8fafc
+}
+.review-item input{width:auto;margin-top:3px}
+.review-item label{margin:0;font-weight:600}
+.review-status{
+  margin-top:16px;
+  padding:14px;
+  border-radius:9px;
+  background:#fef3c7;
+  color:#92400e;
+  font-weight:700
+}
+.review-status.complete{background:#d1fae5;color:#065f46}
+.override-note{margin-top:14px}
+@media(max-width:760px){.review-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -45,9 +75,58 @@
 <h2>How to use the recommendation</h2>
 <ul><li>Validate every input with recruiting and business leaders.</li><li>Compare the recommendation with recruiter capacity and organizational context.</li><li>Document human adjustments and the reason for each change.</li><li>Revisit priorities when deadlines, approvals, or pipeline conditions change.</li></ul>
 </section>
+
+<section class="card" style="margin-top:18px" id="responsible-review">
+  <h2>Responsible-AI review</h2>
+  <p>Complete this human-review checklist before acting on the preliminary recommendation. The checklist is a safeguard, not an approval system.</p>
+  <div class="review-grid">
+    <div class="review-item">
+      <input type="checkbox" id="privacy-check" onchange="updateReview()">
+      <label for="privacy-check">Privacy checked: Candidate names, contact information, compensation details, and confidential business information were removed.</label>
+    </div>
+    <div class="review-item">
+      <input type="checkbox" id="facts-check" onchange="updateReview()">
+      <label for="facts-check">Facts verified: Headcount approval, business impact, deadlines, pipeline information, and known risks were confirmed.</label>
+    </div>
+    <div class="review-item">
+      <input type="checkbox" id="evidence-check" onchange="updateReview()">
+      <label for="evidence-check">Missing evidence reviewed: Unknown, incomplete, or conflicting information was identified for follow-up.</label>
+    </div>
+    <div class="review-item">
+      <input type="checkbox" id="human-check" onchange="updateReview()">
+      <label for="human-check">Human decision confirmed: Recruiting and business leaders—not the tool—made the final priority decision.</label>
+    </div>
+    <div class="review-item">
+      <input type="checkbox" id="override-check" onchange="updateReview()">
+      <label for="override-check">Adjustments documented: Any change to the preliminary recommendation includes a clear, human-written reason.</label>
+    </div>
+  </div>
+  <label class="override-note" for="override-note">Human adjustment or context</label>
+  <textarea id="override-note" rows="3" placeholder="Example: Leadership moved this role to Priority 1 because a verified customer commitment was not represented in the original inputs." oninput="updateReview()"></textarea>
+  <div class="review-status" id="review-status" role="status" aria-live="polite">Responsible-AI review: 0 of 5 safeguards confirmed.</div>
+  <button class="secondary" onclick="resetReview()">Reset review</button>
+</section>
+
 </main>
 <footer>Created by Matthew Rojas · Practical AI for Recruiting Operations · All examples are fictional</footer>
 <script>
+
+var reviewIds=['privacy-check','facts-check','evidence-check','human-check','override-check'];
+function updateReview(){
+var completed=reviewIds.filter(function(id){return document.getElementById(id).checked;}).length;
+var status=document.getElementById('review-status');
+status.textContent='Responsible-AI review: '+completed+' of '+reviewIds.length+' safeguards confirmed.';
+if(completed===reviewIds.length){
+status.textContent+=' Human review is documented; final accountability remains with people.';
+status.className='review-status complete';
+}else{status.className='review-status';}
+}
+function resetReview(){
+reviewIds.forEach(function(id){document.getElementById(id).checked=false;});
+document.getElementById('override-note').value='';
+updateReview();
+}
+
 function analyze(){
 var role=document.getElementById('role').value||'Untitled role';
 var approval=document.getElementById('approval').value;
