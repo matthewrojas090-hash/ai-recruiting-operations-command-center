@@ -86,7 +86,7 @@ function esc(s){var d=document.createElement('div');d.textContent=s;return d.inn
 function shorten(s,n){return s.length>n?s.slice(0,n-1).trim()+'…':s;}
 
 function splitCriteria(text){return text.split(/(?<=[.!?])\s+|\n+/).map(function(x){return x.trim();}).filter(Boolean);}
-function bestCriterion(criteria,evidence,fallback,index){var evidenceTerms=terms(evidence,8),best='',bestScore=-1;criteria.forEach(function(c){var l=c.toLowerCase(),score=evidenceTerms.filter(function(t){return l.includes(t)}).length;if(score>bestScore){best=c;bestScore=score;}});return bestScore>0?best:(criteria[index%criteria.length]||fallback);}
+function pickCriterion(criteria,pattern,index){return criteria.find(function(c){return pattern.test(c);})||criteria[index%criteria.length]||'the approved hiring bar for this role and level';}
 function generateQuestions(){
   var role=value('roleTitle'),level=value('level'),job=value('job'),rubric=value('rubric'),principles=value('principles'),resume=value('resume');
   if(!role||!level||!job||!rubric||!principles||!resume){alert('Complete the role, level, job description, job-family rubric, company principles, and de-identified resume.');return;}
@@ -96,7 +96,7 @@ function generateQuestions(){
   function pickEvidence(pattern,fallbackIndex,used){var found=resumeSentences.find(function(s){return pattern.test(s)&&!used.includes(s);});if(!found)found=resumeSentences.find(function(s){return !used.includes(s);});return found||'The resume does not provide a distinct example; verify this area during the screen.';}
   var used=[];
   var evidence=[
-    pickEvidence(/\b\d+(?:\.\d+)?\s*(?:%|percent|days?|weeks?|months?|years?|people|teams?|x|k|m)?\b|improv|increas|reduc|sav|deliver|result/i,0,used),
+    pickEvidence(/\b\d+(?:\.\d+)?\s*(?:%|percent|days?|weeks?|months?|people|teams?|x|k|m)\b|improv|increas|reduc|sav|deliver|result|productiv|efficien|availability/i,0,used),
     '',
     '',
     ''
@@ -105,6 +105,12 @@ function generateQuestions(){
   evidence[1]=pickEvidence(/architect|system|technical|engineer|product|process|operat|design|build|implement/i,1,used);used.push(evidence[1]);
   evidence[2]=pickEvidence(/lead|manage|scope|team|influenc|strategy|stakeholder|organization/i,2,used);used.push(evidence[2]);
   evidence[3]=pickEvidence(/\bai\b|automation|learn|curious|innov|workflow|tool/i,3,used);
+  var mappedCriteria=[
+    pickCriterion(criteria,/deliver|result|outcome|impact|productiv|customer|business/i,0),
+    pickCriterion(criteria,/technical|functional|architect|system|trade.?off|depth|quality|operational/i,1),
+    pickCriterion(criteria,/level|scope|lead|manage|influenc|strateg|team|ambigu/i,2),
+    pickCriterion(criteria,/\bai\b|learn|curious|innov|invent|improv|judgment|risk/i,3)
+  ];
   var focuses=['Results and ownership','Functional or technical depth','Level, scope, and influence','Learning, AI, or company-principle alignment'];
   var probes=[
     'Walk me through the original problem, your personal actions, how you protected the business process or customer experience, and how you verified the result.',
@@ -113,7 +119,7 @@ function generateQuestions(){
     'Which judgment or learning mattered most, including how you used—or chose not to use—AI? How did you validate quality, manage risk, and improve the outcome?'
   ];
   state.questions=focuses.map(function(focus,i){
-    var ev=evidence[i],criterion=bestCriterion(criteria,ev,'the approved hiring bar for this role and level',i);
+    var ev=evidence[i],criterion=mappedCriteria[i];
     return {focus:focus,evidence:ev,criterion:criterion,q:'I saw on your resume that “'+shorten(ev,170)+'” This connects to the company expectation: “'+shorten(criterion,170)+'” '+probes[i],keys:terms(ev+' '+criterion,8).concat(i===3?['ai','learn','validate','risk']:[])};
   });
   renderQuestions();showStep(2);
