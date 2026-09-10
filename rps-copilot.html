@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recruiter Phone Screen Copilot</title>
+<style>
+:root{--navy:#12233f;--blue:#2563eb;--teal:#0f766e;--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#64748b;--red:#b91c1c;--amber:#b45309;--green:#047857;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}header{background:linear-gradient(120deg,var(--navy),#244b7a);color:#fff;padding:34px 20px}header div,main{max-width:1160px;margin:auto}h1{margin:0 0 8px;font-size:clamp(28px,5vw,44px)}header p{max-width:820px;line-height:1.5;margin:0;color:#dce8f8}main{padding:0 18px 30px}.notice{background:#e0f2fe;border-left:4px solid var(--blue);padding:14px 16px;margin:22px 0;border-radius:8px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{margin:0;background:#e2e8f0;color:#334155}.tab.active{background:var(--blue);color:#fff}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 4px 18px rgba(15,23,42,.08);margin-bottom:18px}label{display:block;font-weight:700;margin:14px 0 6px}.hint{color:var(--muted);font-size:13px;line-height:1.4}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}textarea{resize:vertical}button{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:12px 18px;font-weight:700;cursor:pointer;margin-top:16px}button.secondary{background:#475569;margin-left:8px}button.safe{background:var(--teal)}button:disabled{opacity:.5;cursor:not-allowed}.question{border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0;background:#f8fafc}.question h3{margin:0 0 8px}.bar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.bar{padding:10px;border-radius:8px;font-size:14px}.strong{background:#d1fae5;color:#065f46}.acceptable{background:#e0f2fe;color:#075985}.weak{background:#fef3c7;color:#92400e}.unsupported{background:#fee2e2;color:#991b1b}.rating{display:inline-block;padding:5px 9px;border-radius:999px;font-weight:800;font-size:12px}.green{background:#d1fae5;color:#065f46}.yellow{background:#fef3c7;color:#92400e}.red{background:#fee2e2;color:#991b1b}.gray{background:#e2e8f0;color:#475569}.report{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:20px;border-radius:12px;line-height:1.55;max-height:760px;overflow:auto}.review{border-left:4px solid var(--purple);background:#f5f3ff;padding:14px;border-radius:8px}.status{padding:12px;border-radius:8px;background:#fef3c7;color:#92400e;font-weight:700;margin-top:12px}footer{text-align:center;padding:25px;color:var(--muted);font-size:14px}@media(max-width:780px){.grid,.bar-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div><h1>Recruiter Phone Screen Copilot</h1><p>Turn a resume, role, level, and approved hiring rubric into four focused questions—then convert raw notes into an evidence-based RPS document for recruiter review.</p></div></header>
+<main>
+<div class="notice"><strong>Privacy-first prototype:</strong> Everything runs in this browser tab. Inputs are not uploaded or saved. Remove names, contact details, protected-class information, and confidential data before use.</div>
+<nav class="tabs" aria-label="RPS workflow">
+  <button class="tab active" data-step="1" onclick="showStep(1)">1. Role & evidence</button>
+  <button class="tab" data-step="2" onclick="showStep(2)">2. Four questions</button>
+  <button class="tab" data-step="3" onclick="showStep(3)">3. Notes & transcript</button>
+  <button class="tab" data-step="4" onclick="showStep(4)">4. RPS document</button>
+</nav>
+
+<section class="panel active" id="step-1">
+<div class="grid">
+  <div class="card">
+    <h2>Role information</h2>
+    <label for="roleTitle">Role title or job family</label><input id="roleTitle" value="Senior Software Development Manager">
+    <label for="level">Role level</label><input id="level" value="Senior / M2">
+    <label for="job">Job description</label><textarea id="job" rows="11" placeholder="Paste the de-identified job description.">Lead managers and senior engineers building distributed cloud services. Own architecture, delivery, reliability, talent development, and cross-functional execution. Experience with distributed systems, system design, operational excellence, and technical leadership is required.</textarea>
+  </div>
+  <div class="card">
+    <h2>Evaluation evidence</h2>
+    <label for="rubric">Approved company rubric or hiring bar</label><textarea id="rubric" rows="8" placeholder="Paste only the approved, job-related evaluation criteria.">Technical depth: explains architecture and tradeoffs in distributed systems. Leadership scope: leads managers or senior engineers through ambiguous programs. Delivery: owns measurable outcomes and operational quality. Level: demonstrates sustained influence across multiple teams. AI fluency: uses AI thoughtfully and validates outputs.</textarea>
+    <label for="resume">De-identified candidate resume</label><textarea id="resume" rows="8" placeholder="Remove name, email, address, photo, graduation dates, and other unnecessary personal information.">Engineering leader with 12 years in cloud infrastructure. Managed three engineering teams and 24 employees. Led a multi-region service redesign that improved availability from 99.9% to 99.99%. Built manager development and operating-review mechanisms. Introduced an AI-assisted incident-analysis workflow with human verification.</textarea>
+    <label for="resumeFile">Optional text resume file</label><input id="resumeFile" type="file" accept=".txt,.md,.csv,.json" onchange="loadResumeFile(event)">
+    <p class="hint">For privacy and reliability, this prototype accepts pasted text or plain-text files—not PDFs or Word documents.</p>
+  </div>
+</div>
+<button onclick="generateQuestions()">Generate exactly four questions</button><button class="secondary" onclick="loadSyntheticExample()">Load synthetic example</button>
+</section>
+
+<section class="panel" id="step-2">
+  <div class="card"><h2>Four rubric-aligned questions</h2><p class="hint">Each question is tied to supplied evidence. Guidance describes evidence quality; it is not a model answer for the candidate.</p><div id="questions"></div><button onclick="showStep(3)">Continue to notes</button></div>
+</section>
+
+<section class="panel" id="step-3">
+  <div class="card">
+    <h2>Recruiter notes or call transcript</h2>
+    <p class="hint">Paste de-identified notes or a transcript. Label answers Q1–Q4 when possible. The tool also searches unlabeled text for evidence related to each question.</p>
+    <textarea id="notes" rows="18" placeholder="Q1: Candidate described...&#10;&#10;Q2: Candidate explained..."></textarea>
+    <button onclick="buildReport()">Build RPS document</button><button class="secondary" onclick="loadSyntheticNotes()">Load synthetic notes</button>
+  </div>
+</section>
+
+<section class="panel" id="step-4">
+<div class="grid">
+  <div class="card">
+    <h2>Evidence-based RPS document</h2>
+    <div class="report" id="report">Complete the earlier steps to create the document.</div>
+    <button onclick="downloadReport()">Download Markdown</button><button class="secondary" onclick="copyReport()">Copy document</button>
+  </div>
+  <div class="card">
+    <h2>Human decision</h2>
+    <div class="review"><strong>The Copilot does not decide.</strong> Review the underlying resume, notes, transcript, and approved rubric. Correct extraction errors and investigate missing evidence before recording a disposition.</div>
+    <label for="decision">Recruiter-owned disposition</label>
+    <select id="decision" onchange="updateHumanStatus()"><option value="">Select after human review</option><option>Proceed to next step</option><option>Follow-up screen required</option><option>Hold for calibration</option><option>Do not proceed</option></select>
+    <label for="decisionReason">Recruiter rationale</label><textarea id="decisionReason" rows="6" placeholder="Document the job-related evidence and any changes to the preliminary recommendation." oninput="updateHumanStatus()"></textarea>
+    <label><input id="verified" type="checkbox" style="width:auto" onchange="updateHumanStatus()"> I verified the factual evidence and made the final decision.</label>
+    <div class="status" id="humanStatus">Human review is not yet complete.</div>
+    <button class="safe" onclick="appendHumanDecision()">Add human decision to document</button><button class="secondary" onclick="resetAll()">Clear all candidate data</button>
+  </div>
+</div>
+</section>
+</main>
+<footer>Created by Matthew Rojas · Practical AI for deeper recruiter screens · Synthetic demonstration only</footer>
+<script>
+var state={questions:[],evaluations:[],report:''};
+var stopWords=new Set('the and for with from this that into role will have has are you your our their they them job work working experience required preferred using use who what when where how why'.split(' '));
+
+function showStep(n){document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('active',x.dataset.step==n)});document.getElementById('step-'+n).classList.add('active');window.scrollTo({top:140,behavior:'smooth'});}
+function value(id){return document.getElementById(id).value.trim();}
+function terms(text,limit){var counts={};(text.toLowerCase().match(/[a-z][a-z0-9+#.-]{2,}/g)||[]).forEach(function(w){if(!stopWords.has(w)){counts[w]=(counts[w]||0)+1;}});return Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]||b.length-a.length}).slice(0,limit);}
+function sentenceWith(text,words){var sentences=text.split(/(?<=[.!?])\s+|\n+/).filter(Boolean);return sentences.find(function(s){var l=s.toLowerCase();return words.some(function(w){return l.includes(w)});})||'';}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function shorten(s,n){return s.length>n?s.slice(0,n-1).trim()+'…':s;}
+
+function generateQuestions(){
+  var role=value('roleTitle'),level=value('level'),job=value('job'),rubric=value('rubric'),resume=value('resume');
+  if(!role||!level||!job||!rubric||!resume){alert('Complete the role, level, job description, rubric, and de-identified resume.');return;}
+  var core=terms(job+' '+rubric,8),resumeTerms=terms(resume,8),skill=core[0]||'core role capability',skill2=core[1]||'technical judgment';
+  var resumeEvidence=sentenceWith(resume,core)||resume.split(/\n|\./)[0]||'the experience shown on the resume';
+  state.questions=[
+    {focus:'Resume evidence + role fit',q:'Your resume states: “'+shorten(resumeEvidence,150)+'” Walk me through your personal contribution, the problem, the decisions you made, and the measurable result. How does that experience prepare you for this '+role+' role?',keys:resumeTerms.slice(0,4).concat(core.slice(0,2))},
+    {focus:'Functional or technical depth',q:'Using a specific example, explain how you applied '+skill+' and '+skill2+'. What alternatives or tradeoffs did you consider, what did you choose, and how did you validate the outcome?',keys:core.slice(0,6)},
+    {focus:'Level and scope',q:'For a '+level+' '+role+', describe the broadest scope you personally owned. Who or what did you influence, how did you operate through ambiguity, and what sustained result demonstrates performance at this level?',keys:['lead','scope','team','influence','manager','strategy','result','owned']},
+    {focus:'AI fluency and judgment',q:'Tell me about a time you used—or deliberately chose not to use—AI in a relevant workflow. What problem were you solving, how did you validate quality, what risks did you manage, and what measurable impact resulted?',keys:['ai','automation','validate','risk','quality','impact','result']}
+  ];
+  renderQuestions(rubric);showStep(2);
+}
+function guidance(q,rubric){var criterion=sentenceWith(rubric,q.keys)||'the supplied job-related rubric';return {
+  strong:'Specific first-person example; clear scope and decisions; verified result; directly demonstrates “'+shorten(criterion,115)+'”.',
+  acceptable:'Relevant example with credible actions and result, but one area—scope, depth, tradeoff, or measurement—needs follow-up.',
+  weak:'General or team-level answer; unclear personal ownership; limited connection to the level or rubric; outcome is vague.',
+  unsupported:'No relevant evidence supplied, contradictory claims, or conclusions that cannot be traced to the resume or conversation.'};}
+function renderQuestions(rubric){var box=document.getElementById('questions');box.innerHTML=state.questions.map(function(x,i){var g=guidance(x,rubric);return '<article class="question"><h3>Q'+(i+1)+': '+esc(x.focus)+'</h3><p>'+esc(x.q)+'</p><div class="bar-grid"><div class="bar strong"><strong>Strong</strong><br>'+esc(g.strong)+'</div><div class="bar acceptable"><strong>Acceptable</strong><br>'+esc(g.acceptable)+'</div><div class="bar weak"><strong>Weak</strong><br>'+esc(g.weak)+'</div><div class="bar unsupported"><strong>Unsupported</strong><br>'+esc(g.unsupported)+'</div></div></article>';}).join('');}
+
+function extractAnswer(notes,index,keys){var re=new RegExp('(?:^|\\n)\\s*(?:Q|Question)\\s*'+(index+1)+'\\s*[:.-]\\s*([\\s\\S]*?)(?=\\n\\s*(?:Q|Question)\\s*'+(index+2)+'\\s*[:.-]|$)','i');var m=notes.match(re);if(m&&m[1].trim())return m[1].trim();var sentences=notes.split(/(?<=[.!?])\s+|\n+/).filter(Boolean);var matches=sentences.filter(function(s){var l=s.toLowerCase();return keys.some(function(k){return l.includes(k)});});return matches.slice(0,3).join(' ')||'No answer was reliably identified in the supplied notes.';}
+function evaluate(answer,q,rubric){if(answer.startsWith('No answer'))return {rating:'Insufficient evidence',cls:'gray',reason:'The notes do not contain enough traceable evidence to compare this area with the bar.',follow:'Ask the question directly or improve the notes before deciding.'};var l=answer.toLowerCase(),hits=q.keys.filter(function(k){return l.includes(k)}).length;var hasMetric=/\b\d+(?:\.\d+)?\s*(?:%|percent|days?|weeks?|months?|years?|people|teams?|x|k|m)?\b/i.test(answer);var firstPerson=/\b(i|my|me)\b/i.test(answer);var hasDecision=/\b(decid|chose|trade.?off|because|personally|owned|led|built|created|implemented)\w*/i.test(answer);var score=Math.min(4,hits)+(hasMetric?2:0)+(firstPerson?1:0)+(hasDecision?2:0);var criterion=sentenceWith(rubric,q.keys)||'Relevant rubric language was not specific enough for an automatic match.';if(score>=6)return {rating:'Strong evidence',cls:'green',reason:'The notes contain relevant detail, personal ownership or decisions, and measurable or concrete evidence aligned with: '+criterion,follow:'Verify the claim and metric, then probe any remaining technical or scope assumptions.'};if(score>=3)return {rating:'Partial evidence',cls:'yellow',reason:'The answer is relevant but does not fully establish scope, personal ownership, depth, tradeoffs, or measurable outcome against: '+criterion,follow:'Ask a focused follow-up before making a disposition.'};return {rating:'Weak or unsupported',cls:'red',reason:'The notes contain limited traceable evidence against: '+criterion,follow:'Do not infer capability; obtain a clearer example or record the gap.'};}
+function qualificationSummary(resume,job){var keys=terms(job,8),sentences=resume.split(/(?<=[.!?])\s+|\n+/).filter(Boolean),matched=sentences.filter(function(s){var l=s.toLowerCase();return keys.some(function(k){return l.includes(k)});}).slice(0,4);return matched.length?matched.join(' '):'The resume contains limited directly matched language. A recruiter should review transferable evidence manually.';}
+function buildReport(){if(!state.questions.length){alert('Generate the four questions first.');showStep(1);return;}var notes=value('notes');if(!notes){alert('Paste de-identified notes or a transcript.');return;}var role=value('roleTitle'),level=value('level'),rubric=value('rubric'),resume=value('resume'),job=value('job');state.evaluations=state.questions.map(function(q,i){var answer=extractAnswer(notes,i,q.keys);return {answer:answer,evaluation:evaluate(answer,q,rubric)};});var counts={green:0,yellow:0,red:0,gray:0};state.evaluations.forEach(function(x){counts[x.evaluation.cls]++;});var outcome=counts.red>0?'Hold for evidence review':counts.gray>0||counts.yellow>1?'Follow-up screen or calibration recommended':'Evidence supports recruiter consideration for the next step';var lines=['# Recruiter Phone Screen (RPS) Document','','**Role:** '+role,'**Level:** '+level,'**Status:** Preliminary AI-assisted evidence organization—human decision required','','## Candidate qualification summary',qualificationSummary(resume,job),''];state.questions.forEach(function(q,i){var e=state.evaluations[i];lines.push('## Question '+(i+1)+': '+q.focus,'',q.q,'','### Candidate answer',e.answer,'','### Comparison with approved bar','**'+e.evaluation.rating+'** — '+e.evaluation.reason,'','**Follow-up:** '+e.evaluation.follow,'');});lines.push('## Preliminary outcome',outcome,'','## Suggested next steps','1. Verify that every extracted statement accurately reflects the candidate’s words.','2. Resolve all partial, weak, unsupported, or missing evidence with job-related follow-up questions.','3. Calibrate uncertain rubric interpretations with the hiring manager.','4. Remove any protected or non-job-related information.','5. Have the recruiter make and document the final disposition.','','## Human-in-the-loop requirement','This document organizes supplied evidence. It does not make a hiring decision. The recruiter owns the final review, correction, and disposition.');state.report=lines.join('\n');document.getElementById('report').textContent=state.report;showStep(4);}
+function updateHumanStatus(){var ok=value('decision')&&value('decisionReason')&&document.getElementById('verified').checked;var s=document.getElementById('humanStatus');s.textContent=ok?'Human review is complete and ready to add to the document.':'Human review is not yet complete.';s.style.background=ok?'#d1fae5':'#fef3c7';s.style.color=ok?'#065f46':'#92400e';}
+function appendHumanDecision(){if(!value('decision')||!value('decisionReason')||!document.getElementById('verified').checked){alert('Select a disposition, document the rationale, and confirm verification.');return;}var base=state.report.replace(/\n## Recruiter final decision[\s\S]*$/,'');state.report=base+'\n\n## Recruiter final decision\n**Disposition:** '+value('decision')+'\n\n**Recruiter rationale:** '+value('decisionReason')+'\n\n**Verification:** The recruiter confirmed factual review and ownership of the final decision.';document.getElementById('report').textContent=state.report;}
+function downloadReport(){if(!state.report){alert('Build the RPS document first.');return;}var blob=new Blob([state.report],{type:'text/markdown'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='de-identified-rps-document.md';a.click();URL.revokeObjectURL(a.href);}
+function copyReport(){if(!state.report){alert('Build the RPS document first.');return;}navigator.clipboard.writeText(state.report).then(function(){alert('RPS document copied.');});}
+function loadResumeFile(event){var file=event.target.files[0];if(!file)return;if(file.size>1000000){alert('Use a text file smaller than 1 MB.');event.target.value='';return;}var reader=new FileReader();reader.onload=function(){document.getElementById('resume').value=reader.result;};reader.readAsText(file);}
+function loadSyntheticNotes(){document.getElementById('notes').value='Q1: I led the redesign personally, set the architecture review, and chose active-active replication after comparing cost and recovery tradeoffs. Availability improved from 99.9% to 99.99% over six months.\n\nQ2: I evaluated consistency, latency, failover, and cost. I selected regional write ownership with tested recovery procedures and reviewed the decision with principal engineers.\n\nQ3: I managed three teams and 24 people through three managers. I aligned infrastructure and product leaders on a two-year roadmap and owned quarterly reliability outcomes.\n\nQ4: I introduced an AI incident-analysis assistant. Engineers verified every source citation and final root-cause statement. It reduced initial analysis time by 30%, while humans retained incident ownership.';}
+function loadSyntheticExample(){document.getElementById('roleTitle').value='Senior Software Development Manager';document.getElementById('level').value='Senior / M2';document.getElementById('job').value='Lead managers and senior engineers building distributed cloud services. Own architecture, delivery, reliability, talent development, and cross-functional execution. Experience with distributed systems, system design, operational excellence, and technical leadership is required.';document.getElementById('rubric').value='Technical depth: explains architecture and tradeoffs in distributed systems. Leadership scope: leads managers or senior engineers through ambiguous programs. Delivery: owns measurable outcomes and operational quality. Level: demonstrates sustained influence across multiple teams. AI fluency: uses AI thoughtfully and validates outputs.';document.getElementById('resume').value='Engineering leader with 12 years in cloud infrastructure. Managed three engineering teams and 24 employees. Led a multi-region service redesign that improved availability from 99.9% to 99.99%. Built manager development and operating-review mechanisms. Introduced an AI-assisted incident-analysis workflow with human verification.';}
+function resetAll(){if(!confirm('Clear all resume, role, rubric, notes, and decision data from this tab?'))return;['roleTitle','level','job','rubric','resume','notes','decisionReason'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('decision').value='';document.getElementById('verified').checked=false;document.getElementById('questions').innerHTML='';document.getElementById('report').textContent='Complete the earlier steps to create the document.';state={questions:[],evaluations:[],report:''};updateHumanStatus();showStep(1);}
+</script>
+</body>
+</html>
