@@ -50,8 +50,9 @@ The Command Center now includes a privacy-first Recruiter Phone Screen Copilot t
 
 ### What it does
 
-- Accepts a de-identified resume, job description or job family, role level, and approved hiring rubric
+- Accepts a de-identified resume, job description or job family, role level, job-family rubric, and approved leadership principles, company tenets, or interview competencies
 - Generates exactly four resume-, role-, level-, and rubric-aligned questions
+- Shows the exact resume evidence and company criterion mapped to each question
 - Shows strong, acceptable, weak, and unsupported evidence guidance for every question
 - Accepts de-identified recruiter notes or a call transcript
 - Produces a structured RPS document with a qualification summary, questions, answers, evidence comparisons, preliminary outcome, and next steps
